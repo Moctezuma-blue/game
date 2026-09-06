@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <raymath.h>
+#include <math.h>
 
 //Structs
 
@@ -70,6 +71,8 @@ SetTargetFPS(60);
 //Texture Loading !!!! Don't forget to Unload them later to avoid memory leaks
 
 Texture2D FederationFlag = LoadTexture("assets/flags/FederationFlag.png");
+Texture2D USFlag = LoadTexture("assets/flags/USFlag.png");
+Texture2D AztecEmpireFlag = LoadTexture("assets/flags/AztecEmpireFlag.png");
 
 //Camera
 
@@ -123,6 +126,8 @@ while(!WindowShouldClose()){
         Vector2 mouseWorldPosAfterZoom = GetScreenToWorld2D(mousePosition, camera);
         camera.target.x += (mouseWorldPosBeforeZoom.x - mouseWorldPosAfterZoom.x);
         camera.target.y += (mouseWorldPosBeforeZoom.y - mouseWorldPosAfterZoom.y);
+        camera.target.x = fmodf(camera.target.x, MAP_WIDTH);
+        if (camera.target.x < 0.0f) camera.target.x += MAP_WIDTH;
     }
 
     if (camera.zoom < dynamicMinZoom) {
@@ -131,8 +136,11 @@ while(!WindowShouldClose()){
 
     float visibleWidth = GetScreenWidth() / camera.zoom;
     float visibleHeight = GetScreenHeight() / camera.zoom;
-    camera.target.x = Clamp(camera.target.x, 0.0f, MAP_WIDTH - visibleWidth);
     camera.target.y = Clamp(camera.target.y, 0.0f, MAP_HEIGHT - visibleHeight);
+
+    camera.target.x = fmodf(camera.target.x, MAP_WIDTH);
+    if(camera.target.x < 0.0f) camera.target.x += MAP_WIDTH;
+
 
 
 
@@ -145,6 +153,8 @@ while(!WindowShouldClose()){
     DrawText("Hello, World!", 200, 200, 20, LIGHTGRAY);
     displayMSG();
     DrawTexture(FederationFlag, 1000, 1000, WHITE);
+    DrawTexture(USFlag, 7000, 2000, WHITE);
+    DrawTexture(AztecEmpireFlag, 4000, 2000, WHITE);
 
     EndMode2D();
 
@@ -157,6 +167,8 @@ while(!WindowShouldClose()){
 //Texture Unload !!!! Important to avoid memory leaks
 
 UnloadTexture(FederationFlag);
+UnloadTexture(USFlag);
+UnloadTexture(AztecEmpireFlag);
 
 
 CloseWindow();
